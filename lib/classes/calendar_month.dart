@@ -2,7 +2,6 @@ import 'package:flutter_application_3/classes/calendar_day.dart';
 import 'package:flutter_application_3/classes/calendar_week.dart';
 import 'package:jiffy/jiffy.dart';
 
-
 class CalendarMonth {
   final String _monthName;
   final List<CalendarWeek> _weeks;
@@ -27,7 +26,6 @@ class CalendarMonth {
   }
 
   factory CalendarMonth.fromDateTime(DateTime selectedDate) {
-    
     CalendarMonth calendarMonth = CalendarMonth._internal(monthName: Jiffy.parseFromDateTime(selectedDate).MMMM);
     //Erster Tag des Monats
     final thisMonthFirstDay = DateTime(selectedDate.year, selectedDate.month, 1);

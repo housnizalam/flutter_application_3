@@ -8,9 +8,10 @@ class ApointmentAppInitial extends ApointmentAppState {}
 
 class CurrentState extends ApointmentAppState {
   CalendarMonth calenderContent;
+  CalendarDay? selectedDay;
 
   CurrentState({
     required this.calenderContent,
-
+    required this.selectedDay,
   });
 }

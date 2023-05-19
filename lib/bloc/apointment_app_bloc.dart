@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_3/classes/apointments.dart';
+import 'package:flutter_application_3/classes/calendar_day.dart';
 import 'package:flutter_application_3/classes/calendar_month.dart';
 import 'package:flutter_application_3/globals.dart';
 import 'package:meta/meta.dart';
@@ -9,13 +11,16 @@ part 'apointment_app_state.dart';
 class ApointmentAppBloc extends Bloc<ApointmentAppEvent, ApointmentAppState> {
   ApointmentAppBloc() : super(ApointmentAppInitial()) {
     CalendarMonth calenderContent = CalendarMonth.fromDateTime(selectedDate);
+    CalendarDay? selectedDay;
     on<ApointmentAppEvent>((event, emit) {
       if (event is NextMonthEvent) {
-        selectedDate = DateTime(selectedDate.year, selectedDate.month + 1, selectedDate.day);
+        selectedDate = DateTime(
+            selectedDate.year, selectedDate.month + 1, selectedDate.day);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
       if (event is PreviousMonthEvent) {
-        selectedDate = DateTime(selectedDate.year, selectedDate.month - 1, selectedDate.day);
+        selectedDate = DateTime(
+            selectedDate.year, selectedDate.month - 1, selectedDate.day);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
       if (event is ChangeViewEvent) {
@@ -32,26 +37,34 @@ class ApointmentAppBloc extends Bloc<ApointmentAppEvent, ApointmentAppState> {
         }
         print(viewMode);
       }
-      if (event is SelectDay) {
-        final weekDay = event.i % 8;
-        final weekIndex = (event.i / 8).floor();
-        final selectedDay = calenderContent.weeks[weekIndex].weekDays[weekDay - 1];
-        if (selectedDay.inThisMonth) {
+      if (event is AddApointment) {
+        print(event.day.numberInMonth);
+        selectedDay = event.day.addApointment(event.newApointment);
+        selectedDay!.numberInMonth = event.day.numberInMonth;
+        print(selectedDay!.numberInMonth);
+        event.newApointment.display();
+
+        if (selectedDay!.inThisMonth) {
+          print(selectedDay!.appointments);
           selectedDate = DateTime(
             selectedDate.year,
             selectedDate.month,
-            selectedDay.numberInMonth,
+            selectedDay!.numberInMonth,
           );
           calenderContent = CalendarMonth.fromDateTime(selectedDate);
+          print(selectedDay!.appointments);
+          print(selectedDay!.numberInMonth);
         }
       }
       if (state is PreviousWeekEvent) {
-        selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day - 7);
+        selectedDate = DateTime(
+            selectedDate.year, selectedDate.month, selectedDate.day - 7);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
         print(selectedDate.day);
       }
       if (state is NextWeekEvent) {
-        selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day + 7);
+        selectedDate = DateTime(
+            selectedDate.year, selectedDate.month, selectedDate.day + 7);
 
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
         print(selectedDate.day);
@@ -66,7 +79,8 @@ class ApointmentAppBloc extends Bloc<ApointmentAppEvent, ApointmentAppState> {
 
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
-      emit(CurrentState(calenderContent: calenderContent));
+      emit(CurrentState(
+          calenderContent: calenderContent, selectedDay: selectedDay));
     });
   }
 }

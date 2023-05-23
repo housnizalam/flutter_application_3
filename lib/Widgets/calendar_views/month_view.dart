@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_3/bloc/apointment_app_bloc.dart';
 import 'package:flutter_application_3/classes/apointments.dart';
+import 'package:flutter_application_3/classes/calendar_day.dart';
 import 'package:flutter_application_3/classes/calendar_month.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -13,8 +14,7 @@ class MonthView extends StatelessWidget {
     Key? key,
     required this.calenderContent,
   }) : super(key: key);
-  Widget build(BuildContext context) =>
-      BlocConsumer<ApointmentAppBloc, ApointmentAppState>(
+  Widget build(BuildContext context) => BlocConsumer<ApointmentAppBloc, ApointmentAppState>(
         listener: (context, state) {
           // TODO: implement listener
         },
@@ -29,16 +29,13 @@ class MonthView extends StatelessWidget {
             children: [
               Expanded(
                 child: GridView.builder(
-                  itemCount: calenderContent.days.length +
-                      calenderContent.weeks.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 8),
+                  itemCount: calenderContent.days.length + calenderContent.weeks.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
                   itemBuilder: (context, i) {
                     final weekDay = i % 8;
                     final weekIndex = (i / 8).floor();
                     final week = calenderContent.weeks[weekIndex];
-                    final day =
-                        weekDay != 0 ? week.weekDays[weekDay - 1] : null;
+                    final day = weekDay != 0 ? week.weekDays[weekDay - 1] : null;
                     return day == null
                         ? Card(
                             color: Colors.black,
@@ -46,8 +43,7 @@ class MonthView extends StatelessWidget {
                               child: Text(
                                 '${week.weekNumber}',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: textSize),
+                                style: TextStyle(color: Colors.white, fontSize: textSize),
                               ),
                             ),
                           )
@@ -55,10 +51,7 @@ class MonthView extends StatelessWidget {
                             color: day.backgroundcolor,
                             child: InkWell(
                               onTap: () {
-                                if (state is CurrentState &&
-                                    state.selectedDay != null &&
-                                    state.selectedDay!.numberInMonth ==
-                                        selectedDate.day) {
+                                if (state is CurrentState && state.selectedDay != null) {
                                   print(state.selectedDay!.appointments);
                                   print(state.selectedDay!.numberInMonth);
                                 }
@@ -137,21 +130,18 @@ class MonthView extends StatelessWidget {
                                         place: place.text,
                                         prioritate: int.parse(prioritate.text),
                                         tittle: tittle.text);
-                                    newApointment.display();
+                                    print('Newapointment tittle');
+                                    print(newApointment.tittle);
                                     BlocProvider.of<ApointmentAppBloc>(context)
-                                        .add(AddApointment(
-                                            day: day,
-                                            newApointment: newApointment));
+                                        .add(AddApointmentDay(day: day, apointment: newApointment));
                                   },
                                 ).show();
                               },
                               child: Center(
                                 child: Text(
                                   '$day',
-                                  style: TextStyle(
-                                      color: day.textColor,
-                                      fontSize: textSize,
-                                      fontWeight: FontWeight.bold),
+                                  style:
+                                      TextStyle(color: day.textColor, fontSize: textSize, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 ),
                               ),

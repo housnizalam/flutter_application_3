@@ -27,9 +27,17 @@ class WeekView extends StatelessWidget {
                   itemBuilder: (context, i) {
                     final weekDay = i % 8;
                     final weekIndex = (i / 8).floor();
-
-                    final week = calenderContent.weeks[weekIndex];
+                    var week = calenderContent.weeks[weekIndex];
                     final day = weekDay != 0 ? week.weekDays[weekDay - 1] : null;
+                    for (CalendarWeek thisWeek in calenderContent.weeks) {
+                      if (day != null) {
+                        if (day.inThisMonth &&
+                            day.numberInMonth == today.day &&
+                            thisWeek.weekDays.contains(day)) {
+                          week = thisWeek;
+                        }
+                      }
+                    }
                     return day == null
                         ? Card(
                             color: Colors.black,

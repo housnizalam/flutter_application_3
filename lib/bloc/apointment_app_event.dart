@@ -18,11 +18,14 @@ class PreviousYearEvent extends ApointmentAppEvent {}
 
 class ChangeViewEvent extends ApointmentAppEvent {}
 
-class AddApointment extends ApointmentAppEvent {
+class AddApointmentDay extends ApointmentAppEvent {
   CalendarDay day;
-  Apointments newApointment;
-  AddApointment({
+  Apointments apointment;
+
+  AddApointmentDay({
     required this.day,
-    required this.newApointment,
+    required this.apointment,
   });
 }
+
+

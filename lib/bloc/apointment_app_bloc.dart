@@ -14,13 +14,11 @@ class ApointmentAppBloc extends Bloc<ApointmentAppEvent, ApointmentAppState> {
     CalendarDay? selectedDay;
     on<ApointmentAppEvent>((event, emit) {
       if (event is NextMonthEvent) {
-        selectedDate = DateTime(
-            selectedDate.year, selectedDate.month + 1, selectedDate.day);
+        selectedDate = DateTime(selectedDate.year, selectedDate.month + 1, selectedDate.day);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
       if (event is PreviousMonthEvent) {
-        selectedDate = DateTime(
-            selectedDate.year, selectedDate.month - 1, selectedDate.day);
+        selectedDate = DateTime(selectedDate.year, selectedDate.month - 1, selectedDate.day);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
       if (event is ChangeViewEvent) {
@@ -33,54 +31,53 @@ class ApointmentAppBloc extends Bloc<ApointmentAppEvent, ApointmentAppState> {
           viewMode = 'WeekView';
         } else if (viewMode == 'WeekView') {
           viewMode = 'YearView';
-          textSize = 6;
+          textSize = 15;
         }
         print(viewMode);
       }
-      if (event is AddApointment) {
-        print(event.day.numberInMonth);
-        selectedDay = event.day.addApointment(event.newApointment);
-        selectedDay!.numberInMonth = event.day.numberInMonth;
-        print(selectedDay!.numberInMonth);
-        event.newApointment.display();
-
-        if (selectedDay!.inThisMonth) {
-          print(selectedDay!.appointments);
-          selectedDate = DateTime(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDay!.numberInMonth,
-          );
+      if (event is AddApointmentDay) {
+        if (isThisDayCreated(event.day.numberInMonth) == false) {
+          final thisDay = CalendarDay(dayNumber: event.day.numberInMonth);
+          final newApointment = event.apointment;
+          thisDay.appointments.add(newApointment);
+          appstate.apointmentDays.add(thisDay);
           calenderContent = CalendarMonth.fromDateTime(selectedDate);
-          print(selectedDay!.appointments);
-          print(selectedDay!.numberInMonth);
+          print('number of apointments');
+
+          print(thisDay.appointments.length);
+        } else {
+          int index = getThisDayIndex(event.day.numberInMonth)!;
+          appstate.apointmentDays[index].appointments.add(event.apointment);
         }
+        print('number of days');
+        print(appstate.apointmentDays.length);
+        print('number of apointments from appstate');
+        print(appstate.apointmentDays[0].appointments.length);
       }
-      if (state is PreviousWeekEvent) {
-        selectedDate = DateTime(
-            selectedDate.year, selectedDate.month, selectedDate.day - 7);
+
+      if (event is PreviousWeekEvent) {
+        selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day - 7);
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
         print(selectedDate.day);
       }
-      if (state is NextWeekEvent) {
-        selectedDate = DateTime(
-            selectedDate.year, selectedDate.month, selectedDate.day + 7);
+      if (event is NextWeekEvent) {
+        selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day + 7);
 
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
         print(selectedDate.day);
       }
-      if (state is NextYearEvent) {
+      if (event is NextYearEvent) {
         selectedDate = DateTime(selectedDate.year + 1, 1, 1);
 
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
-      if (state is PreviousYearEvent) {
+      if (event is PreviousYearEvent) {
         selectedDate = DateTime(selectedDate.year - 1, 1, 1);
 
         calenderContent = CalendarMonth.fromDateTime(selectedDate);
       }
-      emit(CurrentState(
-          calenderContent: calenderContent, selectedDay: selectedDay));
+
+      emit(CurrentState(calenderContent: calenderContent, selectedDay: selectedDay));
     });
   }
 }
